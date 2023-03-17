@@ -26,16 +26,16 @@ order by contraction_rate desc;
 
 -- Countries with the highest deaths 
 
-SELECT Location, MAX(cast(total_deaths as int)) as total_death_count FROM CovidDeaths
+SELECT Location, SUM(cast(new_deaths as int)) as total_death_count FROM CovidDeaths
 Where continent is not null
 Group by location
 order by total_death_count desc;
 
 -- Continents with the highest deaths
 
-SELECT continent, MAX(cast(total_deaths as int)) as total_death_count FROM CovidDeaths
-Where continent is not null
-Group by continent
+SELECT location, SUM(cast(new_deaths as int)) as total_death_count FROM CovidDeaths
+Where continent is null and location not in ('World', 'European Union', 'International')
+Group by location
 order by total_death_count desc;
 
 --Global death rate numbers
@@ -61,7 +61,7 @@ Join CovidVaccinations
 Where coviddeaths.continent is not null and covidvaccinations.new_vaccinations is not null
 order by coviddeaths.location, coviddeaths.date
 
-
+-- CTE TABLE
 
 With PopulationVac (Continent, Location, Date, Population, New_Vaccinations, PeopleVaccinated) as
 (
@@ -127,15 +127,16 @@ Where continent is not null
 -- View 3 for Continents with the highest deaths
 
 Create View DeathsPerContinent as
-SELECT continent, MAX(cast(total_deaths as int)) as total_death_count FROM CovidDeaths
-Where continent is not null
-Group by continent
+SELECT location, SUM(cast(new_deaths as int)) as total_death_count FROM CovidDeaths
+Where continent is null and location not in ('World', 'European Union', 'International')
+Group by location
 -- order by total_death_count desc;
 
 -- View 4 for Countries with the highest deaths 
 
+
 Create View DeathsPerCountry as
-SELECT Location, MAX(cast(total_deaths as int)) as total_death_count FROM CovidDeaths
+SELECT Location, SUM(cast(new_deaths as int)) as total_death_count FROM CovidDeaths
 Where continent is not null
 Group by location
 -- order by total_death_count desc;
